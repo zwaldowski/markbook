@@ -12,7 +12,8 @@ export default {
   output: {
     banner: '#!/usr/bin/env node',
     file: pkg.bin,
-    format: 'cjs'
+    format: 'cjs',
+    sourcemap: true
   },
   external,
   plugins: [
