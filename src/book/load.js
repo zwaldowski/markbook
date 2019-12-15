@@ -9,7 +9,7 @@ const stat = util.promisify(fs.stat)
 
 const check = dir =>
   stat(dir)
-    .catch(() => reject(`${dir} not found`))
+    .catch(error => reject(`${dir} not found`, error))
     .then(stats =>
       stats.isDirectory() ? dir : reject(`${dir} is not a directory`)
     )

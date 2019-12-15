@@ -17,15 +17,19 @@ export const createPath = (...args) =>
     : path.resolve(__dirname, '..', 'data', ...args)
 
 export const readFile = (filename, ...args) =>
-  readFileEx(filename, ...args).catch(() => reject(`Error reading ${filename}`))
+  readFileEx(filename, ...args).catch(error =>
+    reject(`Error reading ${filename}`, error)
+  )
 
 export const readVFile = filename =>
-  vfile.read(filename).catch(() => reject(`Error reading ${filename}`))
+  vfile
+    .read(filename)
+    .catch(error => reject(`Error reading ${filename}`, error))
 
 export const writeFile = (filename, ...args) =>
   mkdir(path.dirname(filename))
     .then(() => writeFileEx(filename, ...args))
-    .catch(() => reject(`Error writing to ${filename}`))
+    .catch(error => reject(`Error writing to ${filename}`, error))
 
 export const readdir = dir =>
   readdirEx(dir)

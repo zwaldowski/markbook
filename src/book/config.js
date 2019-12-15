@@ -41,7 +41,7 @@ export default function (result) {
   if (error) {
     const { label, value } = error.details[0].context
     const errmsg = `${value ? 'invalid' : 'missing'} "${label}"`
-    return reject(errmsg)
+    return reject(errmsg, error)
   }
 
   const ret = { ...result, config: value }

@@ -226,7 +226,7 @@ const extractChapters = compose(
  * Read a file (wrapped for better reject messages).
  */
 const readFile = filename =>
-  vfile.read(filename).catch(() => reject('SUMMARY.md not found', __filename))
+  vfile.read(filename).catch((error) => reject('SUMMARY.md not found', error))
 
 /**
  * Parse SUMMARY.md (wrapped for better reject messages).
@@ -252,7 +252,7 @@ const parse = file =>
         suffix
       }
     })
-    .catch(() => reject('Error parsing SUMMARY.md'))
+    .catch(e => reject('Error parsing SUMMARY.md', e))
 
 /**
  * Load and parse a SUMMARY.md file.
