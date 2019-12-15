@@ -7,7 +7,7 @@ import render from '../renderer/render'
 import load from '../book/load'
 import { handleErrors } from '../common/errors'
 import { status } from '../common/log'
-import open from '../common/open'
+import open from 'open'
 
 export default function (dir, options = {}) {
   options.open = options.open || false
