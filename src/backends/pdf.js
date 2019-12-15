@@ -1,43 +1,18 @@
 /**
- * Create a PDF file using puppeteer-core
+ * Create a PDF file using puppeteer
  */
-import nodeWhich from 'which'
 import path from 'path'
-import puppeteer from 'puppeteer-core'
-import util from 'util'
-import { status, warn } from '../common/log'
-
-const which = util.promisify(nodeWhich)
+import puppeteer from 'puppeteer'
+import { status } from '../common/log'
 
 export default async function (config) {
-  let executablePath = null
-  const names = ['chrome', 'chromium', 'chrome-browser', 'chromium-browser']
-
   const pdf = path.join(config.destination, 'print.pdf')
-  const PATH = process
-    .cwd()
-    .concat(':')
-    .concat(process.env.PATH)
-
   const html = `file://${path
     .resolve(config.destination, 'print.html')
     .replace(/\\/g, '/')
     .replace(/^([^/])/, '/$1')}`
 
-  for (const name of names) {
-    executablePath = await which(name, { path: PATH }).catch(() => false)
-    if (executablePath) {
-      break
-    }
-  }
-
-  // Halt if Chrome/Chromium not found.
-  if (!executablePath) {
-    warn('Chrome not found - not building PDF')
-    return
-  }
-
-  const browser = await puppeteer.launch({ executablePath })
+  const browser = await puppeteer.launch()
   const page = await browser.newPage()
 
   await page.goto(html, { waitUntil: 'networkidle2' })
