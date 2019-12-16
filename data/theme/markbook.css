@@ -27,12 +27,6 @@ a:hover {
   text-decoration: none;
 }
 
-.section {
-  padding-left: 6px;
-  padding-right: 6px;
-  padding-top: 0px;
-}
-
 .is-wrapped {
   white-space: nowrap;
   overflow: hidden;
@@ -43,6 +37,7 @@ a:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: normal;
 }
 
 .menu-list a,
