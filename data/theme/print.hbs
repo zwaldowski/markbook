@@ -10,12 +10,12 @@
     <meta name="theme-color" content="#ffffff" />
     {{#if root}}<base href="{{ root }}">{{/if}}
     <link rel="shortcut icon" href="favicon.png">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css" integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.0/css/bulma.min.css" integrity="sha256-D9M5yrVDqFlla7nlELDaYZIpXfFWDytQtiV+TaH6F1I=" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
     <link rel="stylesheet" href="markbook.css">
   </head>
   <body>
-    <div class="columns is-mobile is-vcentered">
+    <div class="columns is-mobile">
       <!-- Chapter Title -->
       <div class="column is-wrapped has-text-centered">
         <p class="title has-wrapped-overflow has-text-grey-lighter">
@@ -23,11 +23,11 @@
         </p>
       </div>
     </div>
-    
+
     <section class="section">
       <div class="columns">
         <div id="content" class="column">
-          <div class="content is-medium">
+          <div class="content">
             <div class="container">
 {{{ content }}}
             </div>
