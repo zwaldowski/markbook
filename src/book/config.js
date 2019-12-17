@@ -18,6 +18,7 @@ import path from 'path'
 import { createPath } from '../common/files'
 
 const schema = Joi.object({
+  identifier: Joi.string().required(),
   title: Joi.string().required(),
   version: Joi.string().regex(/^\d{1,2}(\.\d{1,2})?(\.\d{1,2}$)?/),
   description: Joi.string(),
@@ -55,16 +56,19 @@ export default function (result) {
     ret.config.theme && ret.config.theme.length
       ? path.join(root, ret.config.theme)
       : createPath('theme')
+  const language = ret.config.language || 'en'
 
   return Promise.resolve({
     root,
     source,
     destination,
     theme,
+    identifier: ret.config.identifier,
     title: ret.config.title,
     version: ret.config.version,
     description: ret.config.description,
     authors: ret.config.authors,
+    language: language,
     config: filepath,
     summary: {
       prefix: [],

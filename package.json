@@ -16,7 +16,7 @@
     "book"
   ],
   "engines": {
-    "node": ">=8"
+    "node": ">=12"
   },
   "scripts": {
     "bundle": "pkg .",
@@ -114,7 +114,8 @@
     "rimraf": "^2.6.3",
     "to-vfile": "^6.0.0",
     "unified": "^7.1.0",
-    "unist-util-visit": "^1.4.1"
+    "unist-util-visit": "^1.4.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

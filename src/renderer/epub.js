@@ -116,6 +116,10 @@ export default async function (config) {
       mediaType: mime.getType(path.extname(assetPath))
     }))
 
+  const list = new Intl.ListFormat(config.language)
+  const creator = list.format(config.authors)
+  const modified = `${new Date().toISOString().slice(0, -5)}Z`
+
   // List of epub data files
   const epubFiles = [
     ['mimetype'],
@@ -123,10 +127,12 @@ export default async function (config) {
     [
       path.join('EPUB', 'content.opf'),
       {
+        creator,
+        modified,
+        identifier: config.identifier,
         title: config.title,
-        language: 'en-US',
-        creator: 'Me',
-        description: 'Brief Description',
+        language: config.language,
+        description: config.description,
         items: htmlFiles.map(([, output]) => output), // TODO: need unix-like
         assets: assets
       }
@@ -135,7 +141,7 @@ export default async function (config) {
       path.join('EPUB', 'toc.ncx'),
       {
         title: config.title,
-        creator: 'Me',
+        creator: creator,
         toc
       }
     ],

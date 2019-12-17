@@ -2,11 +2,13 @@ import { createPath, readdir, readFile, writeFile } from '../common/files'
 import path from 'path'
 import { reject } from '../common/errors'
 import { status } from '../common/log'
+import { v4 as uuid } from 'uuid'
 
-const copy = (author, desc, theme, title, origin, dir, file) => {
+const copy = (identifier, author, desc, theme, title, origin, dir, file) => {
   const replace = data =>
     data
       .toString()
+      .replace(/@IDENTIFIER@/g, identifier)
       .replace(/@TITLE@/g, title)
       .replace(/@DESC@/g, desc)
       .replace(/@AUTHOR@/g, author)
@@ -23,9 +25,8 @@ const copy = (author, desc, theme, title, origin, dir, file) => {
  * Create a new book.
  * @param {!string} dir Path to create a new book in.
  */
-export default function init (dir, options) {
-  const { author, desc, theme, title } = options
-
+export default function init (dir, { author, desc, theme, title } = {}) {
+  const identifier = uuid()
   if (!author) {
     return reject('Missing "author" field')
   } else if (!desc) {
@@ -37,7 +38,7 @@ export default function init (dir, options) {
   const defaultDir = createPath('default')
   const themeDir = createPath('theme')
 
-  const args = [author, desc, theme, title]
+  const args = [identifier, author, desc, theme, title]
 
   const copyFiles = () =>
     readdir(defaultDir).then(files =>
