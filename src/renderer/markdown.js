@@ -10,7 +10,7 @@ import supersub from 'remark-supersub'
 import unified from 'unified'
 import yamlConfig from 'remark-yaml-config'
 import copyAssets from './remark/remark-assets'
-
+import indexterm from './remark/remark-indexterm'
 
 export const createParser = () =>
   unified()
@@ -19,7 +19,7 @@ export const createParser = () =>
     })
     .use(include)
 
-export const createFormatter = (config) =>
+export const createFormatter = config =>
   createParser()
     .use(frontmatter)
     .use(yamlConfig)
@@ -27,6 +27,7 @@ export const createFormatter = (config) =>
     .use(deflist)
     .use(plantuml)
     .use(supersub)
+    .use(indexterm)
     .use(meta)
     .use(bibliography)
     .use(copyAssets, config)
