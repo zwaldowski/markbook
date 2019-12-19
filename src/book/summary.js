@@ -230,7 +230,7 @@ const readFile = filename =>
 /**
  * Parse SUMMARY.md (wrapped for better reject messages).
  */
-const parse = file =>
+const parse = (file, config) =>
   Promise.resolve(file)
     .then(file => {
       const tree = createParser().parse(file)
@@ -260,7 +260,7 @@ export default function (config) {
   const summary = path.join(config.source, 'SUMMARY.md')
 
   return readFile(summary)
-    .then(parse)
+    .then(file => parse(file, config))
     .then(summary => ({
       ...config,
       summary

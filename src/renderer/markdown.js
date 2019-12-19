@@ -9,6 +9,8 @@ import plantuml from './remark/remark-plantuml'
 import supersub from 'remark-supersub'
 import unified from 'unified'
 import yamlConfig from 'remark-yaml-config'
+import copyAssets from './remark/remark-assets'
+
 
 export const createParser = () =>
   unified()
@@ -17,7 +19,7 @@ export const createParser = () =>
     })
     .use(include)
 
-export const createFormatter = () =>
+export const createFormatter = (config) =>
   createParser()
     .use(frontmatter)
     .use(yamlConfig)
@@ -27,3 +29,4 @@ export const createFormatter = () =>
     .use(supersub)
     .use(meta)
     .use(bibliography)
+    .use(copyAssets, config)

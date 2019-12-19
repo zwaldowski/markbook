@@ -11,8 +11,8 @@ import { createFormatter } from './markdown'
 import redirect from 'remark-redirect'
 import tree from './unist/unist-util-to-tree'
 
-const createProcessor = () =>
-  createFormatter()
+const createProcessor = config =>
+  createFormatter(config)
     .use(redirect)
     .use(tree)
 
@@ -23,7 +23,7 @@ export default async function (config) {
     ...config.summary.suffix
   ].map(({ url }) => path.join(config.source, url))
 
-  const processor = createProcessor()
+  const processor = createProcessor(config)
   const theme = await createTheme(config)
 
   const trees = await Promise.all(

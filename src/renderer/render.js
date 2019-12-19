@@ -13,8 +13,8 @@ import remark2rehype from 'remark-rehype'
 import katex from 'rehype-katex'
 import html from 'rehype-stringify'
 
-const createProcessor = searchIndex =>
-  createFormatter()
+const createProcessor = (config, searchIndex) =>
+  createFormatter(config)
     .use(redirect)
     .use(searchIndex)
     .use(remark2rehype)
@@ -82,7 +82,7 @@ export default function (config) {
   ]
 
   const searchIndex = new SearchIndex(config)
-  const processor = createProcessor(searchIndex)
+  const processor = createProcessor(config, searchIndex)
 
   config.toc = createToc(config)
 

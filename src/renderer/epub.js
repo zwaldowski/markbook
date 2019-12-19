@@ -19,8 +19,8 @@ import {
 import { status } from '../common/log'
 import { createFormatter } from './markdown'
 
-const createProcessor = () =>
-  createFormatter()
+const createProcessor = config =>
+  createFormatter(config)
     .use(epub)
     .use(remark2rehype)
     .use(katex)
@@ -47,7 +47,7 @@ const zip = (filename, dir, files) =>
 export default async function (config) {
   const epubDataDir = createPath('epub')
   const epubFilename = path.join(epubDataDir, 'epub.hbs')
-  const processor = createProcessor()
+  const processor = createProcessor(config)
   const compile = params => data => Handlebars.compile(data.toString())(params)
 
   const epubTemplate = await readFile(epubFilename).then(data =>
