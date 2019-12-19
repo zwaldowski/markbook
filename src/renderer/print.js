@@ -18,12 +18,7 @@ import html from 'hast-util-to-html'
 import createTheme from './theme'
 import path from 'path'
 import { status } from '../common/log'
-
-function compiler (config) {
-  this.Compiler = function (tree) {
-    return tree
-  }
-}
+import tree from './unist/unist-util-to-tree'
 
 const createProcessor = () =>
   unified()
@@ -39,7 +34,7 @@ const createProcessor = () =>
     .use(meta)
     .use(bibliography)
     .use(redirect)
-    .use(compiler)
+    .use(tree)
 
 export default async function (config) {
   const files = [
