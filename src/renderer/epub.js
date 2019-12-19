@@ -18,6 +18,7 @@ import {
 } from '../common/files'
 import { status } from '../common/log'
 import { createFormatter } from './markdown'
+import mime from 'mime'
 
 const createProcessor = config =>
   createFormatter(config)
@@ -37,17 +38,17 @@ const zip = (filename, dir, files) =>
     output.on('close', () => resolve())
     archive.on('error', err => reject(err))
     archive.pipe(output)
-    files.forEach(name => {
-      const file = path.join(dir, name)
-      archive.file(file, { name })
-    })
+    archive.directory(dir, false)
     archive.finalize()
   })
 
 export default async function (config) {
   const epubDataDir = createPath('epub')
   const epubFilename = path.join(epubDataDir, 'epub.hbs')
-  const processor = createProcessor(config)
+  const processor = createProcessor({
+    ...config,
+    destination: path.join(config.destination, 'epub', 'EPUB')
+  })
   const compile = params => data => Handlebars.compile(data.toString())(params)
 
   const epubTemplate = await readFile(epubFilename).then(data =>
@@ -62,8 +63,6 @@ export default async function (config) {
   ].map(({ url }) => [
     path.join(config.source, url),
     url
-      .split(path.sep)
-      .join('-')
       .replace(/README\.md$/, 'index.md')
       .replace(/\.md$/, '')
       .concat('.xhtml')
@@ -77,13 +76,13 @@ export default async function (config) {
   ].map(({ title, url }, i) => ({
     title,
     url: url
-      .split(path.sep)
-      .join('-')
       .replace(/README\.md$/, 'index.md')
       .replace(/\.md$/, '')
       .concat('.xhtml'),
     i: i + 1
   }))
+
+  const epubDir = path.join(config.destination, 'epub', 'EPUB')
 
   // Render and copy all XHTML files.
   await Promise.all(
@@ -91,10 +90,12 @@ export default async function (config) {
       readVFile(input)
         .then(processor.process)
         .then(content => {
-          const epub = path.join(config.destination, 'epub', 'EPUB', output)
+          const epub = path.join(epubDir, output)
+          const root = path.relative(path.dirname(epub), epubDir)
           const data = epubTemplate({
             title: config.title,
-            content
+            content,
+            root
           })
 
           status(`Writing ${output}`)
@@ -103,6 +104,17 @@ export default async function (config) {
         })
     )
   )
+
+  const assets = (await readdir(epubDir))
+    .filter(
+      assetPath =>
+        !path.basename(assetPath).startsWith('.') &&
+        path.extname(assetPath) !== '.xhtml'
+    )
+    .map(assetPath => ({
+      href: path.relative(epubDir, assetPath),
+      mediaType: mime.getType(path.extname(assetPath))
+    }))
 
   // List of epub data files
   const epubFiles = [
@@ -115,7 +127,8 @@ export default async function (config) {
         language: 'en-US',
         creator: 'Me',
         description: 'Brief Description',
-        items: htmlFiles.map(([, output]) => output) // TODO: need unix-like
+        items: htmlFiles.map(([, output]) => output), // TODO: need unix-like
+        assets: assets
       }
     ],
     [

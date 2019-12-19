@@ -91,6 +91,7 @@
     "koa-send": "^5.0.0",
     "make-dir": "^3.0.0",
     "mdast-util-to-hast": "^6.0.1",
+    "mime": "^2.4.4",
     "nlcst-to-string": "^2.0.3",
     "open": "^7.0.0",
     "plantuml-encoder": "^1.2.5",

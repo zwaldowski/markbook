@@ -12,6 +12,9 @@
 		{{#each items}}
 		<item media-type="application/xhtml+xml" id="item{{@index}}" href="{{this}}" />
 		{{/each}}
+		{{#each assets}}
+		<item media-type="{{mediaType}}" id="asset{{@index}}" href="{{href}}" />
+		{{/each}}
 		<item media-type="application/xhtml+xml" id="toc" properties="nav" href="toc.xhtml" />
 		<item media-type="application/x-dtbncx+xml" id="ncx" href="toc.ncx" />
 	</manifest>
