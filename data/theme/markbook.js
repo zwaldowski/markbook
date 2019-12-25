@@ -45,30 +45,13 @@ function oninput (evt) {
     searchResults.innerHTML = ''
     return
   }
-  var results = index.search(evt.target.value, 15).map(result => {
-    var contents = result.contents.split(/\s/).filter(str => str.length)
-    var idx = contents.indexOf(evt.target.value)
-    var start = Math.max(idx - 10, 0)
-    var end = Math.min(idx + 15, contents.length - 1)
-    var regex = new RegExp(evt.target.value, 'gi')
-    var str = contents
-      .slice(start, end)
-      .join(' ')
-      .replace(regex, '<strong>$&</strong>')
-    var file =
+  var results = index
+    .search(evt.target.value, 15)
+    .map(result =>
       result.file.length > 0 && result.title.length > 0
-        ? '<a href="' + result.file + '">' + result.title + '</a>'
+        ? `<li><a href="${result.file}">${result.title}</a></li>`
         : ''
-    var teaser =
-      str.length > 0 && str.indexOf(evt.target.value) !== -1
-        ? '<span class="teaser">' + str + '</span>'
-        : ''
-    return '<li>'
-      .concat(file)
-      .concat(teaser)
-      .concat('</li>')
-      .replace('<li></li>', '')
-  })
+    )
   searchHeader.innerHTML =
     String(results.length) + ' results for "' + evt.target.value + '"'
   searchResults.innerHTML = results.join('')

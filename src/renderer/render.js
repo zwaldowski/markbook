@@ -5,9 +5,21 @@ import path from 'path'
 import { status } from '../common/log'
 import { readVFile, writeFile } from '../common/files'
 import createTheme from './theme'
-import createProcessor from './markdown'
+import { createFormatter } from './markdown'
 import createToc from './toc'
-import search from './search'
+import redirect from 'remark-redirect'
+import SearchIndex from './search'
+import remark2rehype from 'remark-rehype'
+import katex from 'rehype-katex'
+import html from 'rehype-stringify'
+
+const createProcessor = searchIndex =>
+  createFormatter()
+    .use(redirect)
+    .use(searchIndex)
+    .use(remark2rehype)
+    .use(katex)
+    .use(html)
 
 const processFile = (file, processor) => readVFile(file).then(processor.process)
 
@@ -69,13 +81,17 @@ export default function (config) {
     ...config.summary.suffix
   ]
 
-  const processor = createProcessor()
+  const searchIndex = new SearchIndex(config)
+  const processor = createProcessor(searchIndex)
 
   config.toc = createToc(config)
 
   return createTheme(config)
     .then(theme => renderFiles(config, processor, theme, files))
-    .then(() => search(config))
+    .then(() => {
+      status('Writing search index')
+      return searchIndex.export()
+    })
     .then(() => {
       status('Done')
       return config
