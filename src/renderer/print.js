@@ -1,38 +1,18 @@
 /**
  * Create a printable HTML file.
  */
-import bibliography from 'remark-bibliography'
-import deflist from 'remark-deflist'
-import frontmatter from 'remark-frontmatter'
-import include from './remark/remark-include'
-import math from 'remark-math'
-import markdown from 'remark-parse'
-import meta from 'remark-meta'
-import redirect from 'remark-redirect'
-import supersub from 'remark-supersub'
-import unified from 'unified'
-import yamlConfig from 'remark-yaml-config'
 import { readVFile, writeFile } from '../common/files'
 import hast from 'mdast-util-to-hast'
 import html from 'hast-util-to-html'
 import createTheme from './theme'
 import path from 'path'
 import { status } from '../common/log'
+import { createFormatter } from './markdown'
+import redirect from 'remark-redirect'
 import tree from './unist/unist-util-to-tree'
 
 const createProcessor = () =>
-  unified()
-    .use(markdown, {
-      footnotes: true
-    })
-    .use(frontmatter)
-    .use(yamlConfig)
-    .use(include)
-    .use(math)
-    .use(deflist)
-    .use(supersub)
-    .use(meta)
-    .use(bibliography)
+  createFormatter()
     .use(redirect)
     .use(tree)
 

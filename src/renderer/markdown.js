@@ -10,14 +10,17 @@ import supersub from 'remark-supersub'
 import unified from 'unified'
 import yamlConfig from 'remark-yaml-config'
 
-export const createFormatter = () =>
+export const createParser = () =>
   unified()
     .use(markdown, {
       footnotes: true
     })
+    .use(include)
+
+export const createFormatter = () =>
+  createParser()
     .use(frontmatter)
     .use(yamlConfig)
-    .use(include)
     .use(math)
     .use(deflist)
     .use(plantuml)

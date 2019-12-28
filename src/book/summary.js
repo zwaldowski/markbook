@@ -9,9 +9,8 @@
  */
 
 import { reject } from '../common/errors'
-import markdown from 'remark-parse'
+import { createParser } from '../renderer/markdown'
 import path from 'path'
-import unified from 'unified'
 import vfile from 'to-vfile'
 
 /**
@@ -234,9 +233,7 @@ const readFile = filename =>
 const parse = file =>
   Promise.resolve(file)
     .then(file => {
-      const tree = unified()
-        .use(markdown)
-        .parse(file)
+      const tree = createParser().parse(file)
 
       const { headers, prefixes, lists, suffixes } = split(tree)
 
