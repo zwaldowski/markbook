@@ -39,6 +39,7 @@ commander
 commander
   .command('epub [dir]')
   .description('Generate an ePub file')
+  .option('-o, --open', 'Open in the book in a book reader')
   .action(epub)
 
 commander
@@ -75,6 +76,6 @@ commander
   .action(serve)
 
 commander.parse(process.argv)
-if (!commander.args.length || typeof commander.args[1] !== 'object') {
+if (process.argv.length < 3) {
   commander.help()
 }

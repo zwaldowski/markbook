@@ -169,12 +169,10 @@ export default async function (config) {
 
   status('Generating book.epub')
 
-  // Generate the final EPUB file.
-  await zip(
-    path.join(config.destination, 'book.epub'),
-    path.join(config.destination, 'epub'),
-    files
-  )
+  const output = path.join(config.destination, 'book.epub')
 
-  return config
+  // Generate the final EPUB file.
+  await zip(output, path.join(config.destination, 'epub'), files)
+
+  return output
 }
