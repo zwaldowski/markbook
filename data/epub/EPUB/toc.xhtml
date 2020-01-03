@@ -7,9 +7,19 @@
   <body>
     <nav xmlns:epub="http://www.idpf.org/2007/ops" epub:type="toc" id="toc">
       <ol>
-        {{#each toc}}
-        <li><a href="{{url}}">{{title}}</a></li>
-        {{/each}}
+{{#* inline "tocLevel"}}
+{{#each this}}
+        <li>
+          <a href="{{url}}" epub:type="{{type}}">{{title}}</a>
+{{#with children}}
+          <ul>
+    {{> tocLevel}}
+          </ul>
+{{/with}}
+        </li>
+{{/each}}
+{{/inline}}
+{{> tocLevel toc}}
       </ol>
     </nav>
   </body>

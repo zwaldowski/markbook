@@ -71,9 +71,9 @@ export default function (result) {
     language: language,
     config: filepath,
     summary: {
-      prefix: [],
-      chapters: [],
-      suffix: []
+      contents: {
+        children: []
+      }
     }
   })
 }

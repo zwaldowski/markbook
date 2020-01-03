@@ -23,7 +23,7 @@
           <span aria-hidden="true" class="fas fa-search"></span>
         </span>
       </div>
-      
+
       <!-- Chapter Title -->
       <div class="column is-wrapped has-text-centered">
         <p class="title has-wrapped-overflow has-text-grey-lighter">
@@ -38,25 +38,30 @@
         </span>
       </div>
     </div>
-    
+
     <section class="section">
       <div class="columns">
         <div id="sidebar" class="column is-2 is-paddingless is-info">
           <aside class="is-medium menu" aria-label="Table of Contents">
             <ul class="menu-list">
-              {{#each toc.prefix}}
-              <li><a href="{{url}}">{{title}}</a></li>
-              {{/each}}
-              {{#each toc.chapters}}
-              <li class="level-{{level}}"><a href="{{url}}">
-                <strong aria-hidden="true">{{ch}}</strong>
-                {{title}}
-              </a></li>
-              {{/each}}
-              {{#each toc.suffix}}
-              <li><a href="{{url}}">{{title}}</a></li>
-              {{/each}}
-
+{{#* inline "tocLevel"}}
+{{#each this}}
+              <li>
+                <a href="{{url}}">
+                  {{#if ch}}
+                  <strong aria-hidden="true">{{ch}}</strong>
+                  {{/if}}
+                  {{title}}
+                </a>
+                {{#with children}}
+                <ul>
+    {{> tocLevel}}
+                </ul>
+                {{/with}}
+              </li>
+{{/each}}
+{{/inline}}
+{{> tocLevel toc}}
             </ul>
           </aside>
         </div>
@@ -74,7 +79,7 @@
         </div>
       </div>
     </section>
-    
+
     <script src="search.js"></script>
     <script src="markbook.js"></script>
   </body>

@@ -20,9 +20,7 @@ The following variables are defined for every theme:
 | `description` | Book description |
 | `root` | Root directory. Used to calculate e.g. the path to `/markbook.css` if the filename is `/cli/init.html` |
 | `book_title` | Chapter title |
-| `toc.prefix` | Prefix links (each contains `url` and `title`) |
-| `toc.chapters` | Chapters (each contains `url` and `title`) |
-| `toc.suffix` | Suffix links (each contains `url` and `title`) |
+| `toc.contents` | Tree of links (each contains `url` and `title`) |
 | `content` | HTML content |
 
 Some names may change before the next release.

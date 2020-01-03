@@ -1,268 +1,89 @@
-/**
- * Yes. This is needlessly big and complex. And it isn't particularly
- * functional-style.
- *
- * Who's bright idea was it to use a markdown file to specify the
- * table-of-contents in a markdown file?
- *
- * @todo Might need to add assert that level is never bigger than 2.
- */
-
+import findAfter from 'unist-util-find-after'
+import findBefore from 'unist-util-find-before'
+import path from 'path'
+import { readVFile } from '../common/files'
 import { reject } from '../common/errors'
 import { createParser } from '../renderer/markdown'
-import path from 'path'
-import vfile from 'to-vfile'
+import mapFirst from '../renderer/unist/unist-util-map-first'
+import tree from '../renderer/unist/unist-util-to-tree'
+import flatMap from '../renderer/unist/unist-util-flat-map'
 
-/**
- * Summary item.
- * @typedef {Object} SummaryItem
- * @property {string} name - Chapter name.
- * @property {string} filename - Path to the chapter's source file.
- */
-
-/**
- * Summary object
- * @typedef {Object} Summary
- * @property {SummaryItem[]} prefix - Chapters before the main text (e.g. an introduction).
- * @property {SummaryItem[]} chapters - The main body of the book.
- * @property {SummaryItem[]} suffix - Chapters after the main text (e.g. a conclusion).
- */
-
-/**
- * Split remark tree into headers, prefixes, lists, and suffixes
- * @todo Really need to make this more FP-style. Recursion, Object.assign, etc.
- * @todo Maybe delete all root non-heading/paragraph/list nodes.
- */
-const split = tree => {
-  let isDone = false
-  let index = 0
-
-  const headers = tree.children.filter((node, i) => {
-    if (isDone) {
-      return false
-    }
-    if (node.type === 'heading') {
-      return true
-    }
-    index = i
-    isDone = true
-
-    return false
-  })
-
-  isDone = false
-
-  const prefixes = tree.children.slice(index).filter((node, i) => {
-    if (isDone) {
-      return false
-    }
-    if (node.type === 'paragraph') {
-      return true
-    }
-    isDone = true
-    index += i
-    return false
-  })
-
-  isDone = false
-
-  const lists = tree.children.slice(index).filter((node, i) => {
-    if (isDone) {
-      return false
-    }
-    if (node.type === 'list') {
-      return true
-    }
-    isDone = true
-    index += i
-    return false
-  })
-
-  isDone = false
-
-  const suffixes = tree.children.slice(index).filter((node, i) => {
-    if (isDone) {
-      return false
-    }
-    if (node.type === 'paragraph') {
-      return true
-    }
-    isDone = true
-    index += i
-    return false
-  })
-
-  return {
-    headers,
-    prefixes,
-    lists,
-    suffixes
+/// For a chapter list, guess whether it is frontmatter, bodymatter, or backmatter.
+const inferPartition = (node, parent) => {
+  const hasBefore = findBefore(parent, node, 'list')
+  const hasAfter = findAfter(parent, node, 'list')
+  if (hasAfter && !hasBefore) {
+    return 'frontmatter'
+  } else if (hasBefore && !hasAfter) {
+    return 'backmatter'
+  } else {
+    return 'bodymatter'
   }
 }
 
-/**
- * ES6 compose function.
- */
-const compose = (...fns) =>
-  fns.reduceRight((f, g) => (...args) => f(g(...args)))
+/// A node's value, title, or the values or titles of all its children.
+const plainText = node =>
+  node.value ||
+  node.title ||
+  (node.children &&
+    node.children.reduce((acc, val) => acc.concat(plainText(val)), '')) ||
+  ''
 
-/**
- * Method for flattening nested arrays. Intended for .reduce()
- */
-const flattener = (acc, val) =>
-  Array.isArray(val) ? acc.concat(val.reduce(flattener, [])) : acc.concat(val)
-
-/**
- * Remove unneeded properties from links arrays.
- */
-const removeExtra = items =>
-  items.map(item => {
-    const { type, children, url, value } = item
-    return JSON.parse(
-      JSON.stringify({
-        type,
-        url,
-        value,
-        children: Array.isArray(children) ? removeExtra(children) : children
-      })
-    )
-  })
-
-/**
- * Extract the header.
- */
-const extractHeader = headers =>
-  headers
-    .map(node => node.children)
-    .reduce(flattener, [])
-    .map(node => (node.value ? node.value : ''))[0] // eslint-disable-line no-unexpected-multiline
-
-/**
- * Extract the prefix.
- */
-const extractPrefix = items =>
-  items
-    .map(node => node.children.filter(node => node.type === 'link'))
-    .reduce(flattener, [])
-    .map(node => ({
-      title: node.children.reduce(
-        (acc, val) => (val.type === 'text' ? acc.concat(val.value) : acc),
-        ''
-      ),
-      url: node.url
-    }))
-
-/**
- * Extract the suffix.
- */
-const extractSuffix = items =>
-  items
-    .map(node => node.children.filter(node => node.type === 'link'))
-    .reduce(flattener, [])
-    .map(node => ({
-      title: node.children.reduce(
-        (acc, val) => (val.type === 'text' ? acc.concat(val.value) : acc),
-        ''
-      ),
-      url: node.url
-    }))
-
-/**
- * Find paragraph nodes and add them (including a nested level indicator).
- */
-const findParagraphs = (items, i = 0) =>
-  items.reduce((acc, val) => {
-    if (val.type === 'paragraph') {
-      return acc.concat({
-        ...val,
-        level: i / 2
-      })
-    }
-    return acc.concat(findParagraphs(val.children, i + 1))
-  }, [])
-
-/**
- * Flatten the links array to just what is needed.
- */
-const flattenLinks = items =>
-  items.reduce((acc, val) => {
-    if (
-      val.children &&
-      val.children.length === 1 &&
-      val.children[0].type === 'link'
-    ) {
-      return acc.concat({
-        title: val.children[0].children[0].value,
-        url: val.children[0].url,
-        level: val.level
-      })
-    }
-    if (Array.isArray(val.children)) {
-      return acc.concat(flattenLinks(val.children))
-    }
-    return acc.concat(val)
-  }, [])
-
-/**
- * Remove anything that isn't a link item from this array.
- */
-const linksOnly = items =>
-  items.filter(
-    item => item.title && item.title.length && item.url && item.url.length
-  )
-
-/**
- * Extract the different chapters.
- */
-const extractChapters = compose(
-  removeExtra,
-  findParagraphs,
-  flattenLinks,
-  linksOnly
-)
-
-/**
- * Read a file (wrapped for better reject messages).
- */
-const readFile = filename =>
-  vfile.read(filename).catch((error) => reject('SUMMARY.md not found', error))
-
-/**
- * Parse SUMMARY.md (wrapped for better reject messages).
- */
-const parse = (file, config) =>
-  Promise.resolve(file)
-    .then(file => {
-      const tree = createParser().parse(file)
-
-      const { headers, prefixes, lists, suffixes } = split(tree)
-
-      const header = extractHeader(headers)
-      const prefix = extractPrefix(prefixes)
-      const chapters = extractChapters(lists)
-      const suffix = extractSuffix(suffixes)
+/// Returns summary items for the chapters in a list.
+const extractChapters = (
+  node,
+  _index,
+  parent,
+  type = inferPartition(node, parent),
+  parentNumbering = []
+) =>
+  flatMap(
+    node,
+    'listItem',
+    (item, index) => {
+      const numbering = parentNumbering.concat(index + 1)
+      const { title, url } = mapFirst(item, 'paragraph', para => ({
+        title: plainText(para),
+        url: mapFirst(para, 'link', link => link.url)
+      }))
+      const children = mapFirst(item, 'list', (list, index, parent) =>
+        extractChapters(list, index, parent, type, numbering)
+      )
 
       return {
-        header,
-        prefix,
-        chapters,
-        suffix
+        type,
+        title,
+        url,
+        children,
+        numbering
       }
-    })
+    },
+    false
+  )
+
+/// Remark plugin to compute a markbook summary item tree.
+const plugin = () => parent => ({
+  type: 'root',
+  children: flatMap(parent, 'list', extractChapters, false).flat()
+})
+
+/// Parse SUMMARY.md (wrapped for better reject messages).
+const processFile = async file => {
+  const contents = await readVFile(file)
+  const processor = createParser()
+    .use(plugin)
+    .use(tree)
+  return processor
+    .process(contents)
     .catch(e => reject('Error parsing SUMMARY.md', e))
+}
 
-/**
- * Load and parse a SUMMARY.md file.
- * @param {!string} filename - Path to `SUMMARY.md`.
- * @returns {Summary} An object representing the books contents.
- */
-export default function (config) {
-  const summary = path.join(config.source, 'SUMMARY.md')
-
-  return readFile(summary)
-    .then(file => parse(file, config))
-    .then(summary => ({
-      ...config,
-      summary
-    }))
+/// Load and parse a SUMMARY.md file.
+export default async function (config) {
+  const file = path.join(config.source, 'SUMMARY.md')
+  const summary = await processFile(file)
+  return {
+    ...config,
+    summary
+  }
 }

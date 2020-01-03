@@ -1,4 +1,4 @@
-import Handlebars from 'handlebars'
+import Handlebars from './handlebars'
 import { copyDir, readFile } from '../common/files'
 import path from 'path'
 

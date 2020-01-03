@@ -12,6 +12,7 @@ import SearchIndex from './search'
 import remark2rehype from 'remark-rehype'
 import katex from 'rehype-katex'
 import html from 'rehype-stringify'
+import flatMap from './unist/unist-util-flat-map'
 
 const createProcessor = (config, searchIndex) =>
   createFormatter(config)
@@ -21,11 +22,9 @@ const createProcessor = (config, searchIndex) =>
     .use(katex)
     .use(html)
 
-const processFile = (file, processor) => readVFile(file).then(processor.process)
+const read = (config, item) => readVFile(path.join(config.source, item.url))
 
-const mapP = (input, cb) => Promise.all(input.map(cb))
-
-function write (name, config, template, vfile) {
+const write = async (config, template, vfile) => {
   const content = vfile.contents.toString()
 
   // Make sure we don't end up with a title like "Markbook - Markbook"
@@ -36,7 +35,8 @@ function write (name, config, template, vfile) {
     : config.title
 
   // Replace ".md" with ".html" and use "index.html" instead of "README.md"
-  const filename = name
+  const filename = path
+    .relative(config.source, vfile.path)
     .replace(/README\.md$/, 'index.md')
     .replace(/\.md$/, '')
     .concat('.html')
@@ -48,7 +48,6 @@ function write (name, config, template, vfile) {
   const data = template({
     ...vfile.data,
     book_title: config.title,
-    ...config.toc,
     toc: config.toc,
     content,
     title,
@@ -56,44 +55,33 @@ function write (name, config, template, vfile) {
   })
 
   status('Writing', filename)
-
-  return writeFile(filepath, data)
+  await writeFile(filepath, data)
 }
 
-const renderFiles = (config, processor, theme, files) => {
-  const readFiles = file => {
-    const input = path.join(config.source, file.url)
-    return processFile(input, processor).then(vfile => [vfile, file.url])
-  }
+const renderFiles = async (config, processor, theme) => {
+  await Promise.all(
+    flatMap(config.summary.contents, async item => {
+      const input = await read(config, item)
+      const output = await processor.process(input)
+      await write(config, theme.template, output)
+    })
+  )
 
-  const writeFiles = ([vfile, name]) =>
-    write(name, config, theme.template, vfile).then(() => vfile)
-
-  return mapP(files, readFiles)
-    .then(vfiles => mapP(vfiles, writeFiles))
-    .then(theme.copy)
+  await theme.copy()
 }
 
-export default function (config) {
-  const files = [
-    ...config.summary.prefix,
-    ...config.summary.chapters,
-    ...config.summary.suffix
-  ]
-
+export default async function (config) {
   const searchIndex = new SearchIndex(config)
   const processor = createProcessor(config, searchIndex)
 
   config.toc = createToc(config)
 
-  return createTheme(config)
-    .then(theme => renderFiles(config, processor, theme, files))
-    .then(() => {
-      status('Writing search index')
-      return searchIndex.export()
-    })
-    .then(() => {
-      status('Done')
-      return config
-    })
+  const theme = await createTheme(config)
+  await renderFiles(config, processor, theme)
+
+  status('Writing search index')
+  await searchIndex.export()
+
+  status('Done')
+  return config
 }

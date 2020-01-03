@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en">
   <head>
-    <meta name="dtb:depth" content="1"/>
+    <meta name="dtb:depth" content="{{tocDepth}}"/>
     <meta name="dtb:totalPageCount" content="0"/>
     <meta name="dtb:maxPageNumber" content="0"/>
   </head>
   <docTitle><text>{{ title }}</text></docTitle>
   <docAuthor><text>{{ creator }}</text></docAuthor>
   <navMap>
-    {{#each toc}}
-    <navPoint id="navpoint-{{i}}" playOrder="{{i}}">
+{{#* inline "tocLevel"}}
+{{#each this}}
+    <navPoint id="navpoint-{{id}}" playOrder="{{inc @index}}">
       <navLabel><text>{{title}}</text></navLabel>
       <content src="{{url}}" />
+  {{> tocLevel children}}
     </navPoint>
-    {{/each}}
+{{/each}}
+{{/inline}}
+{{> tocLevel toc}}
   </navMap>
 </ncx>

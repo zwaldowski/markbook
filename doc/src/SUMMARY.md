@@ -1,6 +1,6 @@
 # Summary
 
-[Markbook](README.md)
+- [Markbook](README.md)
 
 * [Command Line Tool](cli/README.md)
   + [build](cli/build.md)
@@ -13,4 +13,4 @@
   + [CommonMark](writing/commonmark.md)
   + [Markbook-Specific Extensions](writing/extensions.md)
 
-[Contributors](contributors.md)
+- [Contributors](contributors.md)

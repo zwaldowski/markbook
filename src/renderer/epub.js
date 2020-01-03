@@ -4,7 +4,7 @@
 import archiver from 'archiver'
 import epub from './remark/remark-epub'
 import fs from 'fs'
-import Handlebars from 'handlebars'
+import Handlebars from './handlebars'
 import html from 'rehype-stringify'
 import katex from 'rehype-katex'
 import path from 'path'
@@ -19,6 +19,7 @@ import {
 import { status } from '../common/log'
 import { createFormatter } from './markdown'
 import mime from 'mime'
+import flatMap from './unist/unist-util-flat-map'
 
 const createProcessor = config =>
   createFormatter(config)
@@ -42,6 +43,25 @@ const zip = (filename, dir, files) =>
     archive.finalize()
   })
 
+const getURL = filename =>
+  filename
+    .replace(/README\.md$/, 'index.md')
+    .replace(/\.md$/, '')
+    .concat('.xhtml')
+
+const toTOC = item => ({
+  type: item.type,
+  title: item.title,
+  url: getURL(item.url),
+  children: item.children ? item.children.map(toTOC) : null,
+  id: item.url.replace(/[^a-zA-Z0-9_-]/g, '_')
+})
+
+const depth = parent =>
+  (parent.children
+    ? parent.children.reduce((acc, child) => Math.max(acc, depth(child)), 0)
+    : 0) + 1
+
 export default async function (config) {
   const epubDataDir = createPath('epub')
   const epubFilename = path.join(epubDataDir, 'epub.hbs')
@@ -56,31 +76,14 @@ export default async function (config) {
   )
 
   // Create list of XHTML files to generate.
-  const htmlFiles = [
-    ...config.summary.prefix,
-    ...config.summary.chapters,
-    ...config.summary.suffix
-  ].map(({ url }) => [
+  const htmlFiles = flatMap(config.summary.contents, ({ url }) => [
     path.join(config.source, url),
-    url
-      .replace(/README\.md$/, 'index.md')
-      .replace(/\.md$/, '')
-      .concat('.xhtml')
+    getURL(url)
   ])
 
   // Create Table of Contents
-  const toc = [
-    ...config.summary.prefix,
-    ...config.summary.chapters,
-    ...config.summary.suffix
-  ].map(({ title, url }, i) => ({
-    title,
-    url: url
-      .replace(/README\.md$/, 'index.md')
-      .replace(/\.md$/, '')
-      .concat('.xhtml'),
-    i: i + 1
-  }))
+  const toc = config.summary.contents.children.map(toTOC)
+  const tocDepth = depth(config.summary.contents) - 1
 
   const epubDir = path.join(config.destination, 'epub', 'EPUB')
 
@@ -142,7 +145,8 @@ export default async function (config) {
       {
         title: config.title,
         creator: creator,
-        toc
+        toc,
+        tocDepth
       }
     ],
     [

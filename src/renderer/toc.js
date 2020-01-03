@@ -1,42 +1,16 @@
+const getURL = filename =>
+  filename
+    .replace(/README\.md$/, 'index.md')
+    .replace(/\.md$/, '')
+    .concat('.html')
+
+const toTOC = item => ({
+  title: item.title,
+  url: getURL(item.url),
+  ch: item.type === 'bodymatter' ? item.numbering.join('.') : null,
+  children: item.children ? item.children.map(toTOC) : null
+})
+
 export default function createToc (config) {
-  const geturl = filename =>
-    filename
-      .replace(/README\.md$/, 'index.md')
-      .replace(/\.md$/, '')
-      .concat('.html')
-
-  const chapter = (items, i) =>
-    items.slice(0, i + 1).filter(item => item.level === 1).length
-
-  const subchapter = (items, i) =>
-    i -
-    items.indexOf(
-      items
-        .slice(0, i + 1)
-        .reverse()
-        .find(i => i.level === 1)
-    )
-
-  const prefix = config.summary.prefix.map(item => ({
-    title: item.title,
-    url: geturl(item.url)
-  }))
-
-  const chapters = config.summary.chapters.map((item, i, items) => ({
-    title: item.title,
-    url: geturl(item.url),
-    ch: `${chapter(items, i)}.${subchapter(items, i)}`.replace(/\.0$/, '.'),
-    level: item.level
-  }))
-
-  const suffix = config.summary.suffix.map(item => ({
-    title: item.title,
-    url: geturl(item.url)
-  }))
-
-  return {
-    prefix,
-    chapters,
-    suffix
-  }
+  return config.summary.contents.children.map(toTOC)
 }

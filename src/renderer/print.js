@@ -10,24 +10,25 @@ import { status } from '../common/log'
 import { createFormatter } from './markdown'
 import redirect from 'remark-redirect'
 import tree from './unist/unist-util-to-tree'
+import flatMap from './unist/unist-util-flat-map'
 
 const createProcessor = config =>
   createFormatter(config)
     .use(redirect)
     .use(tree)
 
-export default async function (config) {
-  const files = [
-    ...config.summary.prefix,
-    ...config.summary.chapters,
-    ...config.summary.suffix
-  ].map(({ url }) => path.join(config.source, url))
+const read = async (config, item) =>
+  readVFile(path.join(config.source, item.url))
 
+export default async function (config) {
   const processor = createProcessor(config)
   const theme = await createTheme(config)
 
   const trees = await Promise.all(
-    files.map(file => readVFile(file).then(processor.process))
+    flatMap(config.summary.contents, async item => {
+      const input = await read(config, item)
+      return processor.process(input)
+    })
   )
 
   const children = trees.reduce(
