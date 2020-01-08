@@ -1,4 +1,3 @@
-import bibliography from 'remark-bibliography'
 import deflist from 'remark-deflist'
 import frontmatter from 'remark-frontmatter'
 import include from './remark/remark-include'
@@ -27,5 +26,4 @@ export const createFormatter = config =>
     .use(supersub)
     .use(indexterm)
     .use(meta)
-    .use(bibliography)
     .use(copyAssets, config)

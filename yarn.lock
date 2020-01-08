@@ -1781,11 +1781,6 @@ ci-info@^2.0.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-2.0.0.tgz#67a9e964be31a51e15e5010d58e6f12834002f46"
   integrity sha512-5tK7EtrZ0N+OLFMthtqOj4fI2Jeb88C4CAZPu25LDVUgXJ0A3Js4PMGqrn0JU1W0Mh1/Z8wZzYPxqUrXeBboCQ==
 
-citeproc@^2.1.241:
-  version "2.2.30"
-  resolved "https://registry.yarnpkg.com/citeproc/-/citeproc-2.2.30.tgz#cb53fe03cb7ba56c2bb40599b1fb6b2b301137fe"
-  integrity sha512-8EFCQiKCh4MC5mKgNiME/8tco4sehq2iZDvkX7NlI3tAS8fhUGlnbQZopeHVdHnj/LD69OEsj/yjiNZYPjHHCw==
-
 class-utils@^0.3.5:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/class-utils/-/class-utils-0.3.6.tgz#f93369ae8b9a7ce02fd41faad0ca83033190c463"
@@ -4515,11 +4510,6 @@ load-json-file@^4.0.0:
     pify "^3.0.0"
     strip-bom "^3.0.0"
 
-locale-en-us@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/locale-en-us/-/locale-en-us-0.0.2.tgz#11eb4ad8f2b33430ee24a74c4d206377f827aedb"
-  integrity sha512-I02W/LK36C1IDloiFY4ZvK7kIs4C92vCHVEI01rIrJPzzlqcn1NnUxn5d1oiq0pe6JwuzpWwSCYnV0o1WAQP9g==
-
 locate-path@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-2.0.0.tgz#2b568b265eec944c6d9c0de9c3dbbbca0354cd8e"
@@ -5897,19 +5887,6 @@ rehype-stringify@^5.0.0:
     hast-util-to-html "^5.0.0"
     xtend "^4.0.1"
 
-remark-bibliography@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/remark-bibliography/-/remark-bibliography-0.2.0.tgz#1de36ae6fd7023c48e01fe68298704aa4042d65b"
-  integrity sha512-+gl7yOCIgphESyJg1sIF4ZfdfSHXg3bjJSc+/yNpXW5W8uDfIS1sqjkvxZoFLdAK/8s8jIjMZ8ycopKkuj0FsQ==
-  dependencies:
-    citeproc "^2.1.241"
-    locale-en-us "0.0.2"
-    style-apa "0.0.2"
-    style-chicago "0.0.2"
-    style-mla "0.0.2"
-    style-vancouver "0.0.2"
-    unist-util-visit "^1.4.0"
-
 remark-deflist@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/remark-deflist/-/remark-deflist-0.2.0.tgz#76f8f8d486b3e37d7a7722621d1143b8630493b8"
@@ -6736,26 +6713,6 @@ strip-json-comments@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
-
-style-apa@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/style-apa/-/style-apa-0.0.2.tgz#0c4879fa878f5e7473f99a220512d700c3de53eb"
-  integrity sha512-DSgE7KPxV0Z3o5j4mAOGWp+Dpl9KhPUS5+704lEsVCI0G/LjbnvoINJUWn2llrYR95PH9Dkw0M9fiTt/BwEAoA==
-
-style-chicago@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/style-chicago/-/style-chicago-0.0.2.tgz#7ff3034a27d49b1cc5113bb157438401fd0eac94"
-  integrity sha512-xQyPhA3eLMmpV2BQ9+OwxYy6RgUIrxbXFxH6Demd8QlBQpXvj5rkZNn3YpEMyvoAinghFjZOGGuaBDCYiZxFxQ==
-
-style-mla@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/style-mla/-/style-mla-0.0.2.tgz#94788c5d8f3bc20b0b49a77243b35a7fbbe0677b"
-  integrity sha512-uxe00Gcv8W5Rgie8QStLnMlZh4o821UwWclr+SfgMNCRRVF8ncB9wvqU093FcS2QR02V8/YNE0P2ySJ2GFIFSw==
-
-style-vancouver@0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/style-vancouver/-/style-vancouver-0.0.2.tgz#fede0c9aa81f6bcb00f8ecc4427e8e94a763cc08"
-  integrity sha512-6DYqSJSRPdPYPZB64LAKjhX6IBpbI8G2QJg0qsgGE6vLMvWG/8tTpuzdIsZPDMPBMnF2jt/1WBqbDZR4VaA2KQ==
 
 supports-color@^2.0.0:
   version "2.0.0"
