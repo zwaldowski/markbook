@@ -1,6 +1,5 @@
 import deflist from 'remark-deflist'
 import frontmatter from 'remark-frontmatter'
-import include from './remark/remark-include'
 import markdown from 'remark-parse'
 import meta from 'remark-meta'
 import supersub from 'remark-supersub'
@@ -10,11 +9,9 @@ import copyAssets from './remark/remark-assets'
 import indexterm from './remark/remark-indexterm'
 
 export const createParser = () =>
-  unified()
-    .use(markdown, {
-      footnotes: true
-    })
-    .use(include)
+  unified().use(markdown, {
+    footnotes: true
+  })
 
 export const createFormatter = config =>
   createParser()
