@@ -1,4 +1,3 @@
-import deflist from 'remark-deflist'
 import frontmatter from 'remark-frontmatter'
 import markdown from 'remark-parse'
 import meta from 'remark-meta'
@@ -17,7 +16,6 @@ export const createFormatter = config =>
   createParser()
     .use(frontmatter)
     .use(yamlConfig)
-    .use(deflist)
     .use(supersub)
     .use(indexterm)
     .use(meta)
