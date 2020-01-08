@@ -47,7 +47,6 @@ export default function (dir, options = {}) {
     init(fulldir, {
       author,
       desc,
-      theme,
       title,
       ...answers
     })

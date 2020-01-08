@@ -15,7 +15,6 @@
 import * as Joi from 'joi'
 import { reject } from '../common/errors'
 import path from 'path'
-import { createPath } from '../common/files'
 
 const schema = Joi.object({
   identifier: Joi.string().required(),
@@ -24,8 +23,7 @@ const schema = Joi.object({
   description: Joi.string(),
   authors: Joi.array().items(Joi.string().required(), Joi.string()),
   src: Joi.string(),
-  build: Joi.string(),
-  theme: Joi.string()
+  build: Joi.string()
 })
 
 /**
@@ -50,19 +48,14 @@ export default function (result) {
   const filepath = path.relative(process.cwd(), ret.filepath)
 
   const root = path.dirname(filepath)
-  const source = path.join(root, ret.config.src || 'src')
-  const destination = path.join(root, ret.config.build || 'book')
-  const theme =
-    ret.config.theme && ret.config.theme.length
-      ? path.join(root, ret.config.theme)
-      : createPath('theme')
+  const source = path.resolve(root, ret.config.src || 'src')
+  const destination = path.resolve(root, ret.config.build || 'book')
   const language = ret.config.language || 'en'
 
   return Promise.resolve({
     root,
     source,
     destination,
-    theme,
     identifier: ret.config.identifier,
     title: ret.config.title,
     version: ret.config.version,

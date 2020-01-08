@@ -9,7 +9,6 @@ const readFileEx = util.promisify(fs.readFile)
 const writeFileEx = util.promisify(fs.writeFile)
 const readdirEx = util.promisify(fs.readdir)
 const stat = util.promisify(fs.stat)
-const pass = () => true
 
 export const createPath = (...args) =>
   process.env.NODE_ENV === 'test'
@@ -44,13 +43,3 @@ export const readdir = dir =>
       )
     )
     .then(files => files.reduce((a, f) => a.concat(f), []))
-
-export const copyDir = (source, destination, exclude = pass) =>
-  readdir(source).then(files =>
-    Promise.all(
-      files.filter(exclude).map(src => {
-        const dest = path.resolve(destination, path.relative(source, src))
-        return readFile(src).then(data => writeFile(dest, data))
-      })
-    )
-  )
