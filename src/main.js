@@ -4,7 +4,6 @@ import build from './cmd/build'
 import clean from './cmd/clean'
 import epub from './cmd/epub'
 import init from './cmd/init'
-import print from './cmd/print'
 
 commander
   // Add version
@@ -49,11 +48,6 @@ commander
   .option('-d, --desc [desc]', 'Book description')
   .option('-t, --theme', 'Copy the theme to the directory')
   .action(init)
-
-commander
-  .command('print [dir]')
-  .description('Render to a PDF file')
-  .action(print)
 
 commander.parse(process.argv)
 if (process.argv.length < 3) {
