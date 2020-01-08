@@ -10,7 +10,6 @@ import createToc from './toc'
 import redirect from 'remark-redirect'
 import SearchIndex from './search'
 import remark2rehype from 'remark-rehype'
-import katex from 'rehype-katex'
 import html from 'rehype-stringify'
 import flatMap from './unist/unist-util-flat-map'
 
@@ -19,7 +18,6 @@ const createProcessor = (config, searchIndex) =>
     .use(redirect)
     .use(searchIndex)
     .use(remark2rehype)
-    .use(katex)
     .use(html)
 
 const read = (config, item) => readVFile(path.join(config.source, item.url))

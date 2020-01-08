@@ -6,7 +6,6 @@ import epub from './remark/remark-epub'
 import fs from 'fs'
 import Handlebars from './handlebars'
 import html from 'rehype-stringify'
-import katex from 'rehype-katex'
 import path from 'path'
 import remark2rehype from 'remark-rehype'
 import {
@@ -25,7 +24,6 @@ const createProcessor = config =>
   createFormatter(config)
     .use(epub)
     .use(remark2rehype)
-    .use(katex)
     .use(html, {
       closeSelfClosing: true
     })
