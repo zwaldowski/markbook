@@ -3,7 +3,6 @@ import frontmatter from 'remark-frontmatter'
 import include from './remark/remark-include'
 import markdown from 'remark-parse'
 import meta from 'remark-meta'
-import plantuml from './remark/remark-plantuml'
 import supersub from 'remark-supersub'
 import unified from 'unified'
 import yamlConfig from 'remark-yaml-config'
@@ -22,7 +21,6 @@ export const createFormatter = config =>
     .use(frontmatter)
     .use(yamlConfig)
     .use(deflist)
-    .use(plantuml)
     .use(supersub)
     .use(indexterm)
     .use(meta)
