@@ -5,7 +5,6 @@ import clean from './cmd/clean'
 import epub from './cmd/epub'
 import init from './cmd/init'
 import print from './cmd/print'
-import serve from './cmd/serve'
 
 commander
   // Add version
@@ -55,25 +54,6 @@ commander
   .command('print [dir]')
   .description('Render to a PDF file')
   .action(print)
-
-commander
-  .command('serve [dir]')
-  .description(
-    'Serves a book at http://localhost:8080, and rebuilds it on changes'
-  )
-  .option(
-    '-h, --hostname [hostname]',
-    'Hostname to listen on for HTTP connections [localhost]',
-    'localhost'
-  )
-  .option(
-    '-p, --port [port]',
-    'Port to listen on for HTTP connections [8080]',
-    parseInt,
-    8080
-  )
-  .option('-o, --open', 'Open in the book in a web browser')
-  .action(serve)
 
 commander.parse(process.argv)
 if (process.argv.length < 3) {
