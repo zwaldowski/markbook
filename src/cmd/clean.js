@@ -1,11 +1,8 @@
+import { promises as fs } from 'fs'
+import path from 'path'
 import { handleErrors } from '../common/errors'
 import load from '../book/load'
-import path from 'path'
-import { promisify } from 'util'
-import rimraf from 'rimraf'
 import { status } from '../common/log'
-
-const rm = promisify(rimraf)
 
 /**
  * Remove the destination directory.
@@ -19,6 +16,6 @@ export default function (dir) {
   }
 
   return load(fulldir)
-    .then(({ destination }) => rm(destination))
+    .then(({ destination }) => fs.rmdir(destination, { recursive: true }))
     .catch(handleErrors)
 }
