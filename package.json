@@ -19,7 +19,6 @@
     "node": ">=12"
   },
   "scripts": {
-    "bundle": "pkg .",
     "build": "rollup -c",
     "doc": "node bin/markbook build doc",
     "lint": "eslint \"src/**/*.js\"",
@@ -31,17 +30,6 @@
     "test": "jest",
     "test:update": "jest --updateSnapshot",
     "watch": "rollup -c -w"
-  },
-  "pkg": {
-    "assets": [
-      "data/**/*"
-    ],
-    "targets": [
-      "node8-linux-x64",
-      "node8-macos-x64",
-      "node8-win-x64"
-    ],
-    "outputPath": "dist"
   },
   "prettier": {
     "endOfLine": "lf",
@@ -71,7 +59,7 @@
     ]
   },
   "browserslist": [
-    "node 8"
+    "node 12"
   ],
   "dependencies": {
     "archiver": "^3.0.0",
@@ -119,7 +107,6 @@
     "husky": "^4.0.1",
     "jest": "^24.8.0",
     "lint-staged": "^9.5.0",
-    "pkg": "^4.4.0",
     "prettier": "^1.17.1",
     "prettier-standard": "^16.1.0",
     "rollup": "^1.13.1",
