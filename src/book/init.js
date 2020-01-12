@@ -1,60 +1,59 @@
-import { createPath, readdir, readFile, writeFile } from '../common/files'
-import path from 'path'
-import { reject } from '../common/errors'
-import { status } from '../common/log'
+import assert from 'assert'
 import { v4 as uuid } from 'uuid'
+import { status } from '../common/log'
+import { yamlFile } from '../common/templating'
 
-const copy = (identifier, author, desc, theme, title, origin, dir, file) => {
-  const replace = data =>
-    data
-      .toString()
-      .replace(/@IDENTIFIER@/g, identifier)
-      .replace(/@TITLE@/g, title)
-      .replace(/@DESC@/g, desc)
-      .replace(/@AUTHOR@/g, author)
-      .replace(/@THEME@/g, theme ? 'theme: "theme"' : '')
-      .replace(/\n\n/g, '\n')
+const makeConfig = ({ title, description, author }) =>
+  yamlFile('markbook', {
+    identifier: uuid(),
+    title,
+    description,
+    authors: [author]
+  })
 
-  const name = path.relative(origin, file)
-  const output = path.join(dir, name)
+const makeSummary = ({ title }) => `
+# Summary
 
-  return readFile(file).then(data => writeFile(output, replace(data)))
-}
+- [${title}](README.md)
+
+* [First Chapter](chapter-1.md)
+
+`
+
+const makeReadMe = ({ title }) => `
+# ${title}
+
+This is your book.
+`
+
+const makeFirstChapter = () => `
+# First Chapter
+
+This is the first chapter.
+`
 
 /**
  * Create a new book.
  * @param {!string} dir Path to create a new book in.
  */
-export default function init (dir, { author, desc, theme, title } = {}) {
-  const identifier = uuid()
-  if (!author) {
-    return reject('Missing "author" field')
-  } else if (!desc) {
-    return reject('Missing "desc" field')
-  } else if (!title) {
-    return reject('Missing "title" field')
-  }
+export default async function init (dir, { title, description, author } = {}) {
+  assert(title, 'Missing "title" field')
+  assert(description, 'Missing "description" field')
+  assert(author, 'Missing "author" field')
 
-  const defaultDir = createPath('default')
-  const themeDir = createPath('theme')
+  const files = [
+    makeConfig({ title, description, author }),
+    makeSummary({ title }),
+    makeReadMe({ title }),
+    makeFirstChapter()
+  ]
 
-  const args = [identifier, author, desc, theme, title]
+  await Promise.all(
+    files.map(file => {
+      file.cwd = dir
+      return file.write()
+    })
+  )
 
-  const copyFiles = () =>
-    readdir(defaultDir).then(files =>
-      Promise.all(files.map(file => copy(...args, defaultDir, dir, file)))
-    )
-
-  const copyTheme = () =>
-    theme
-      ? readdir(themeDir).then(files =>
-          Promise.all(
-            files.map(file =>
-              copy(...args, themeDir, path.join(dir, 'theme'), file)
-            )
-          )
-        )
-      : Promise.resolve()
-
-  return Promise.all([copyFiles(), copyTheme()]).then(() => status('Finished'))
+  status('Finished')
 }

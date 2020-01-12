@@ -1,20 +1,23 @@
 import frontmatter from 'remark-frontmatter'
-import markdown from 'remark-parse'
 import meta from 'remark-meta'
+import markdown from 'remark-parse'
 import supersub from 'remark-supersub'
-import unified from 'unified'
-import copyAssets from './remark/remark-assets'
 import indexterm from './remark/remark-indexterm'
 
-export const createParser = () =>
-  unified().use(markdown, {
-    footnotes: true
-  })
-
-export const createFormatter = config =>
-  createParser()
-    .use(frontmatter)
-    .use(supersub)
-    .use(indexterm)
-    .use(meta)
-    .use(copyAssets, config)
+export default [
+  [
+    markdown,
+    {
+      commonmark: true,
+      footnotes: true,
+      fences: true,
+      listItemIndent: '1',
+      rule: '-',
+      ruleSpaces: false
+    }
+  ],
+  frontmatter,
+  supersub,
+  indexterm,
+  meta
+]

@@ -1,17 +1,16 @@
-import findAfter from 'unist-util-find-after'
-import findBefore from 'unist-util-find-before'
-import path from 'path'
-import { readVFile } from '../common/files'
-import { reject } from '../common/errors'
-import { createParser } from '../renderer/markdown'
-import mapFirst from '../renderer/unist/unist-util-map-first'
-import tree from '../renderer/unist/unist-util-to-tree'
-import flatMap from '../renderer/unist/unist-util-flat-map'
+import toString from 'mdast-util-to-string'
+import u from 'unist-builder'
+import findAll from '../common/unist/unist-util-find-all'
+import first from '../common/unist/unist-util-first'
+import tree from '../common/unist/unist-util-to-tree'
+import VFile from '../common/vfile'
+import markdown from '../renderer/markdown'
+import unified from 'unified'
 
 /// For a chapter list, guess whether it is frontmatter, bodymatter, or backmatter.
-const inferPartition = (node, parent) => {
-  const hasBefore = findBefore(parent, node, 'list')
-  const hasAfter = findAfter(parent, node, 'list')
+const inferPartition = (_node, index, parent) => {
+  const hasBefore = index !== 0
+  const hasAfter = index !== parent.length - 1
   if (hasAfter && !hasBefore) {
     return 'frontmatter'
   } else if (hasBefore && !hasAfter) {
@@ -21,69 +20,61 @@ const inferPartition = (node, parent) => {
   }
 }
 
-/// A node's value, title, or the values or titles of all its children.
-const plainText = node =>
-  node.value ||
-  node.title ||
-  (node.children &&
-    node.children.reduce((acc, val) => acc.concat(plainText(val)), '')) ||
-  ''
-
 /// Returns summary items for the chapters in a list.
-const extractChapters = (
-  node,
-  _index,
-  parent,
-  type = inferPartition(node, parent),
-  parentNumbering = []
-) =>
-  flatMap(
-    node,
-    'listItem',
-    (item, index) => {
-      const numbering = parentNumbering.concat(index + 1)
-      const { title, url } = mapFirst(item, 'paragraph', para => ({
-        title: plainText(para),
-        url: mapFirst(para, 'link', link => link.url)
-      }))
-      const children = mapFirst(item, 'list', (list, index, parent) =>
-        extractChapters(list, index, parent, type, numbering)
-      )
+const extractChapters = (node, file, type, parentNumbering = []) =>
+  findAll(node, 'listItem').flatMap((item, index) => {
+    const numbering = parentNumbering.concat(index + 1)
 
-      return {
-        type,
-        title,
-        url,
-        children,
-        numbering
-      }
-    },
-    false
-  )
+    const paragraph = first(item, 'paragraph')
+    const link = first(paragraph, 'link')
+    const path = link && link.url
+    const title = link && toString(link)
+
+    const list = first(item, 'list')
+    const children = list ? extractChapters(list, file, type, numbering) : []
+
+    file.assert(
+      path,
+      'Summary item must contain link to chapter',
+      paragraph || item
+    )
+    file.assert(title.length, 'Summary item must have title', paragraph || item)
+
+    return new VFile({
+      type,
+      id: path.replace(/[^a-zA-Z0-9_-]/g, '_'),
+      title,
+      path,
+      children,
+      numbering,
+      cwd: file.cwd
+    })
+  })
 
 /// Remark plugin to compute a markbook summary item tree.
-const plugin = () => parent => ({
-  type: 'root',
-  children: flatMap(parent, 'list', extractChapters, false).flat()
-})
+const summary = () => (root, file) =>
+  u(
+    'root',
+    findAll(root, 'list').flatMap((list, index, parent) =>
+      extractChapters(list, file, inferPartition(list, index, parent))
+    )
+  )
 
-/// Parse SUMMARY.md (wrapped for better reject messages).
-const processFile = async file => {
-  const contents = await readVFile(file)
-  const processor = createParser()
-    .use(plugin)
-    .use(tree)
-  return processor
-    .process(contents)
-    .catch(e => reject('Error parsing SUMMARY.md', e))
-}
+const processor = unified()
+  .use(markdown)
+  .use(summary)
+  .use(tree)
 
 /// Load and parse a SUMMARY.md file.
 export default async function (config) {
-  const file = path.join(config.source, 'SUMMARY.md')
-  const summary = await processFile(file)
+  const summary = new VFile({
+    cwd: config.source,
+    path: 'SUMMARY.md'
+  })
+  await summary.read()
+  await processor.process(summary)
   return {
     ...config,
-    summary
+    summary: summary.contents
   }
 }

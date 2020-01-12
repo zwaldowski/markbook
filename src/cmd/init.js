@@ -1,20 +1,19 @@
 import init from '../book/init'
 import inquirer from 'inquirer'
 import path from 'path'
+import { handleErrors } from '../common/errors'
 import { status } from '../common/log'
 
 /**
  * Create a new markbook.
  */
-export default function (dir, options = {}) {
+export default function (dir, { title, description, author } = {}) {
   const fulldir = path.resolve(dir || '.')
   if (dir) {
     status(`Creating new book in ${dir}`)
   } else {
     status('Creating new book in current dir')
   }
-
-  const { author, desc, theme, title } = options
 
   const questions = []
     .concat(
@@ -26,10 +25,12 @@ export default function (dir, options = {}) {
       }
     )
     .concat(
-      !desc && {
+      !description && {
         type: 'input',
-        name: 'desc',
-        message: 'Enter book description:'
+        name: 'description',
+        message: 'Enter book description:',
+        validate: val =>
+          val && val.length ? true : 'Must enter a book description'
       }
     )
     .concat(
@@ -46,9 +47,9 @@ export default function (dir, options = {}) {
   return inquirer.prompt(questions).then(answers =>
     init(fulldir, {
       author,
-      desc,
+      description,
       title,
       ...answers
-    })
+    }).catch(handleErrors)
   )
 }
