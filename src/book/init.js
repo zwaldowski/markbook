@@ -1,11 +1,11 @@
 import assert from 'assert'
-import { v4 as uuid } from 'uuid'
-import { status } from '../common/log'
-import { yamlFile } from '../common/templating'
+import uuid from 'uuid'
+import { status } from '../common/log.js'
+import { yamlFile } from '../common/templating.js'
 
 const makeConfig = ({ title, description, author }) =>
   yamlFile('markbook', {
-    identifier: uuid(),
+    identifier: uuid.v4(),
     title,
     description,
     authors: [author]

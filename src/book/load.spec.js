@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import load from './load'
+import load from './load.js'
 import path from 'path'
 
 describe('load', () => {

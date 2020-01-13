@@ -2,7 +2,7 @@ import frontmatter from 'remark-frontmatter'
 import meta from 'remark-meta'
 import markdown from 'remark-parse'
 import supersub from 'remark-supersub'
-import indexterm from './remark/remark-indexterm'
+import indexterm from './remark/remark-indexterm.js'
 
 export default [
   [

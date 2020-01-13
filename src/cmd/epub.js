@@ -2,12 +2,12 @@
  * Generate an ePub 3.0 document.
  */
 
-import path from 'path'
-import load from '../book/load'
-import epub from '../renderer/epub'
-import { handleErrors } from '../common/errors'
-import { status } from '../common/log'
 import open from 'open'
+import path from 'path'
+import load from '../book/load.js'
+import { handleErrors } from '../common/errors.js'
+import { status } from '../common/log.js'
+import epub from '../renderer/epub.js'
 
 export default function (dir, { open: shouldOpen = false } = {}) {
   const fulldir = path.resolve(dir || '.')

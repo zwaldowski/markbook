@@ -1,6 +1,6 @@
 import path from 'path'
 import visit from 'unist-util-visit'
-import '../../common/vfile'
+import '../../common/vfile.js'
 
 const isOutside = (filepath, cwd) =>
   !path.resolve(cwd, filepath).startsWith(cwd)

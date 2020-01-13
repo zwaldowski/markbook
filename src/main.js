@@ -1,14 +1,14 @@
 import commander from 'commander'
-import { description, version } from '../package.json'
-import clean from './cmd/clean'
-import epub from './cmd/epub'
-import init from './cmd/init'
+// import { description, version } from '../package.json'
+import clean from './cmd/clean.js'
+import epub from './cmd/epub.js'
+import init from './cmd/init.js'
 
 commander
   // Add version
-  .version(version, '-v, --version')
+  .version(0.1, '-v, --version')
   // Add description
-  .description(description)
+  .description('blah')
 
 commander
   .command('clean [dir]')

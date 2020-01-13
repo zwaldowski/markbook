@@ -89,8 +89,6 @@
     "yaml": "^1.7.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.7.7",
     "@commitlint/cli": "^8.3.3",
     "@commitlint/config-conventional": "^8.3.4",
     "@rollup/plugin-json": "^4.0.1",
@@ -110,8 +108,8 @@
     "prettier": "^1.17.1",
     "prettier-standard": "^16.1.0",
     "rollup": "^1.13.1",
-    "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-executable": "^1.5.2",
     "standard-version": "^7.0.1"
-  }
+  },
+  "type": "module"
 }

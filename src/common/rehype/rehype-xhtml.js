@@ -1,6 +1,6 @@
 // Rehype plugin for converting non-XHTML5 content.
 import visit from 'unist-util-visit'
-import first from '../unist/unist-util-first'
+import first from '../unist/unist-util-first.js'
 
 export default function () {
   return tree => {

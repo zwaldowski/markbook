@@ -8,13 +8,20 @@ import path from 'path'
 import remark2rehype from 'remark-rehype'
 import document from 'rehype-document'
 import unified from 'unified'
-import { status } from '../common/log'
-import markdown from './markdown'
-import collectAssets from './remark/remark-assets'
-import epub from './remark/remark-epub'
-import findAll from '../common/unist/unist-util-find-all'
-import { h, xhtml, textFile, xhtmlFile, xmlFile, x } from '../common/templating'
-import types from '../common/types'
+import { status } from '../common/log.js'
+import markdown from './markdown.js'
+import collectAssets from './remark/remark-assets.js'
+import epub from './remark/remark-epub.js'
+import findAll from '../common/unist/unist-util-find-all.js'
+import {
+  h,
+  xhtml,
+  textFile,
+  xhtmlFile,
+  xmlFile,
+  x
+} from '../common/templating.js'
+import types from '../common/types.js'
 
 const createProcessor = config =>
   unified()

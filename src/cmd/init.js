@@ -1,8 +1,8 @@
-import init from '../book/init'
 import inquirer from 'inquirer'
 import path from 'path'
-import { handleErrors } from '../common/errors'
-import { status } from '../common/log'
+import init from '../book/init.js'
+import { handleErrors } from '../common/errors.js'
+import { status } from '../common/log.js'
 
 /**
  * Create a new markbook.

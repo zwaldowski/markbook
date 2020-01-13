@@ -1,10 +1,10 @@
 /* eslint-env jest */
-import config from './config'
+import config from './config.js'
 import path from 'path'
 
 describe('config', () => {
   it('should parse correctly', () => {
-    expect(
+    return expect(
       config({
         filepath: path.join('tests', 'basic', 'markbook.yml'),
         config: {

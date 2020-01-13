@@ -1,11 +1,11 @@
 import toString from 'mdast-util-to-string'
-import u from 'unist-builder'
-import findAll from '../common/unist/unist-util-find-all'
-import first from '../common/unist/unist-util-first'
-import tree from '../common/unist/unist-util-to-tree'
-import VFile from '../common/vfile'
-import markdown from '../renderer/markdown'
 import unified from 'unified'
+import u from 'unist-builder'
+import findAll from '../common/unist/unist-util-find-all.js'
+import first from '../common/unist/unist-util-first.js'
+import tree from '../common/unist/unist-util-to-tree.js'
+import VFile from '../common/vfile.js'
+import markdown from '../renderer/markdown.js'
 
 /// For a chapter list, guess whether it is frontmatter, bodymatter, or backmatter.
 const inferPartition = (_node, index, parent) => {

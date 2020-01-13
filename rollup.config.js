@@ -1,4 +1,3 @@
-import babel from 'rollup-plugin-babel'
 import { builtinModules } from 'module'
 import executable from 'rollup-plugin-executable'
 import json from '@rollup/plugin-json'
@@ -12,16 +11,9 @@ export default {
   output: {
     banner: '#!/usr/bin/env node',
     file: pkg.bin,
-    format: 'cjs',
+    format: 'esm',
     sourcemap: true
   },
   external,
-  plugins: [
-    json(),
-    resolve(),
-    babel({
-      exclude: 'node_modules/**'
-    }),
-    executable()
-  ]
+  plugins: [json(), resolve(), executable()]
 }

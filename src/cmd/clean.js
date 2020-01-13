@@ -1,8 +1,8 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import { handleErrors } from '../common/errors'
-import load from '../book/load'
-import { status } from '../common/log'
+import load from '../book/load.js'
+import { handleErrors } from '../common/errors.js'
+import { status } from '../common/log.js'
 
 /**
  * Remove the destination directory.

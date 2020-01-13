@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import fs from 'fs'
-import init from './init'
+import init from './init.js'
 
 jest.mock('fs')
 

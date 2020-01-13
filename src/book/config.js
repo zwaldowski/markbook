@@ -12,8 +12,8 @@
  * @property {Summary} summary - Summary.
  */
 
-import * as Joi from 'joi'
-import { reject } from '../common/errors'
+import Joi from 'joi'
+import { reject } from '../common/errors.js'
 import path from 'path'
 
 const schema = Joi.object({

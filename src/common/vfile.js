@@ -1,7 +1,7 @@
 import { promises as fs } from 'fs'
 import path from 'path'
-import * as VFile from 'vfile'
-import { reject } from './errors'
+import VFile from 'vfile'
+import { reject } from './errors.js'
 
 export default VFile
 

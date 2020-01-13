@@ -1,9 +1,9 @@
 import cosmiconfig from 'cosmiconfig'
 import fs from 'fs'
-import { reject } from '../common/errors'
 import util from 'util'
-import summary from './summary'
-import config from './config'
+import { reject } from '../common/errors.js'
+import summary from './summary.js'
+import config from './config.js'
 
 const stat = util.promisify(fs.stat)
 

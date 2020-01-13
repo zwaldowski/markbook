@@ -1,6 +1,6 @@
 /* eslint-env jest */
 import path from 'path'
-import summary from './summary'
+import summary from './summary.js'
 
 const case1 = ['parse a basic summary', path.join('tests', 'basic', 'src')]
 

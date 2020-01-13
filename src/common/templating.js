@@ -5,8 +5,8 @@ import u from 'unist-builder'
 import x from 'xastscript'
 import toXML from 'xast-util-to-xml'
 import YAML from 'yaml'
-import html5Only from './rehype/rehype-xhtml'
-import VFile from '../common/vfile'
+import html5Only from './rehype/rehype-xhtml.js'
+import VFile from '../common/vfile.js'
 
 export { h, u, x }
 
